@@ -472,6 +472,111 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Function to share an activity
+  function shareActivity(name, details) {
+    const schedule = formatSchedule(details);
+    const shareText = `Check out "${name}" at Mergington High School!\n${details.description}\nSchedule: ${schedule}`;
+    const shareUrl = window.location.href;
+
+    if (navigator.share) {
+      navigator.share({
+        title: `${name} - Mergington High School`,
+        text: shareText,
+        url: shareUrl,
+      }).catch(() => {});
+    } else {
+      showShareDialog(name, shareText, shareUrl);
+    }
+  }
+
+  // Function to show a share dialog with platform options
+  function showShareDialog(name, shareText, shareUrl) {
+    let shareDialog = document.getElementById("share-dialog");
+    if (!shareDialog) {
+      shareDialog = document.createElement("div");
+      shareDialog.id = "share-dialog";
+      shareDialog.className = "modal hidden";
+      shareDialog.innerHTML = `
+        <div class="modal-content">
+          <span class="close-share-modal">&times;</span>
+          <h3>Share Activity</h3>
+          <p id="share-activity-name" class="share-activity-title"></p>
+          <div class="share-buttons">
+            <button class="share-option share-twitter">𝕏 Twitter</button>
+            <button class="share-option share-facebook">Facebook</button>
+            <button class="share-option share-email">✉ Email</button>
+            <button class="share-option share-copy">📋 Copy</button>
+          </div>
+          <div id="share-copy-feedback" class="hidden share-copy-feedback">Copied!</div>
+        </div>
+      `;
+      document.body.appendChild(shareDialog);
+
+      shareDialog.querySelector(".close-share-modal").addEventListener("click", () => {
+        closeShareDialog();
+      });
+
+      shareDialog.addEventListener("click", (event) => {
+        if (event.target === shareDialog) {
+          closeShareDialog();
+        }
+      });
+    }
+
+    // Update the dialog with current activity info
+    shareDialog.querySelector("#share-activity-name").textContent = name;
+
+    const twitterBtn = shareDialog.querySelector(".share-twitter");
+    const newTwitterBtn = twitterBtn.cloneNode(true);
+    twitterBtn.parentNode.replaceChild(newTwitterBtn, twitterBtn);
+    newTwitterBtn.addEventListener("click", () => {
+      const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+      window.open(twitterUrl, "_blank", "noopener,noreferrer");
+    });
+
+    const facebookBtn = shareDialog.querySelector(".share-facebook");
+    const newFacebookBtn = facebookBtn.cloneNode(true);
+    facebookBtn.parentNode.replaceChild(newFacebookBtn, facebookBtn);
+    newFacebookBtn.addEventListener("click", () => {
+      const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareText)}`;
+      window.open(facebookUrl, "_blank", "noopener,noreferrer");
+    });
+
+    const emailBtn = shareDialog.querySelector(".share-email");
+    const newEmailBtn = emailBtn.cloneNode(true);
+    emailBtn.parentNode.replaceChild(newEmailBtn, emailBtn);
+    newEmailBtn.addEventListener("click", () => {
+      const subject = encodeURIComponent(`Check out ${name} at Mergington High School!`);
+      const body = encodeURIComponent(shareText);
+      window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    });
+
+    const copyBtn = shareDialog.querySelector(".share-copy");
+    const newCopyBtn = copyBtn.cloneNode(true);
+    copyBtn.parentNode.replaceChild(newCopyBtn, copyBtn);
+    newCopyBtn.addEventListener("click", () => {
+      navigator.clipboard.writeText(`${shareText}\n${shareUrl}`).then(() => {
+        const feedback = shareDialog.querySelector("#share-copy-feedback");
+        feedback.classList.remove("hidden");
+        setTimeout(() => feedback.classList.add("hidden"), 2000);
+      }).catch(() => {
+        showMessage("Could not copy to clipboard. Please copy manually.", "error");
+      });
+    });
+
+    // Show the dialog
+    shareDialog.classList.remove("hidden");
+    setTimeout(() => shareDialog.classList.add("show"), 10);
+  }
+
+  function closeShareDialog() {
+    const shareDialog = document.getElementById("share-dialog");
+    if (shareDialog) {
+      shareDialog.classList.remove("show");
+      setTimeout(() => shareDialog.classList.add("hidden"), 300);
+    }
+  }
+
   // Function to render a single activity card
   function renderActivityCard(name, details) {
     const activityCard = document.createElement("div");
@@ -568,6 +673,9 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         `
         }
+        <button class="share-button" data-activity="${name}" aria-label="Share this activity">
+          📤 Share
+        </button>
       </div>
     `;
 
@@ -586,6 +694,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
+
+    // Add click handler for share button
+    const shareButton = activityCard.querySelector(".share-button");
+    shareButton.addEventListener("click", () => {
+      shareActivity(name, details);
+    });
 
     activitiesList.appendChild(activityCard);
   }
