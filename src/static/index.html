@@ -5,12 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mergington High School Activities</title>
     <link rel="stylesheet" href="styles.css" />
+    <script>
+      // Apply dark mode before page renders to avoid flash
+      (function () {
+        var stored = localStorage.getItem("darkMode");
+        var isDark =
+          stored !== null
+            ? stored === "true"
+            : window.matchMedia("(prefers-color-scheme: dark)").matches;
+        if (isDark) document.documentElement.classList.add("dark-mode");
+      })();
+    </script>
   </head>
   <body>
     <header>
       <h1>Mergington High School</h1>
       <h2>Extracurricular Activities</h2>
       <div id="user-controls">
+        <button id="dark-mode-toggle" class="icon-button" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <span id="dark-mode-icon">🌙</span>
+        </button>
         <div id="user-status">
           <button id="login-button" class="icon-button">
             <span class="user-icon">👤</span>
