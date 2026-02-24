@@ -187,7 +187,9 @@ section h3 {
   margin-top: auto;
   padding-top: 10px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
 
 /* Activity Tag */
@@ -663,4 +665,82 @@ footer {
 
 #logout-button:hover {
   background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Share button */
+.share-button {
+  background-color: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  border-radius: 15px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 8px;
+}
+
+.share-button:hover {
+  background-color: var(--background);
+  border-color: var(--primary-light);
+  color: var(--primary);
+}
+
+/* Share dialog styles */
+.share-activity-title {
+  font-weight: bold;
+  color: var(--primary);
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.share-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.share-option {
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border: none;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.share-option:hover {
+  opacity: 0.85;
+}
+
+.share-twitter {
+  background-color: #000;
+  color: #fff;
+}
+
+.share-facebook {
+  background-color: #1877f2;
+  color: #fff;
+}
+
+.share-email {
+  background-color: var(--primary);
+  color: #fff;
+}
+
+.share-copy {
+  background-color: var(--secondary);
+  color: #fff;
+}
+
+.share-copy-feedback {
+  text-align: center;
+  color: var(--success);
+  font-weight: bold;
+  margin-top: 10px;
+  font-size: 0.85rem;
 }
